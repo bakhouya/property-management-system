@@ -5,7 +5,6 @@ from django.contrib.auth.models import AbstractUser
 from visitors.models import Visitor
 
 
-
 # ============================================================================================
 # A model representing users within the system.
 # Allows storing basic information for each user and supports login using a phone number.
@@ -50,6 +49,7 @@ class User(AbstractUser):
         self.is_blocked = not self.is_blocked
         self.save()
         return self.is_blocked
+    
 # ============================================================================================
 
 
