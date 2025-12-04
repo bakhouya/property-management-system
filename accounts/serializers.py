@@ -8,7 +8,7 @@ from .models import User
 from utils.validators import DynamicValidator
 from utils.helpers import handle_file_update
 from .rules import USER_RULES
-
+from rest_framework_simplejwt.tokens import RefreshToken
 
 # =====================================================================================================================
 # A dedicated source for creating and updating admin user accounts.
@@ -68,7 +68,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if 'password' in data or 'confirm_password' in data:
             if data.get('password') != data.get('confirm_password'):
-                raise serializers.ValidationError({'confirm_password': 'كلمات المرور غير متطابقة'})
+               raise serializers.ValidationError({'error': 'Password does not match confirmation'})
         return data
     # =========================================================================================================================================
     #  
@@ -94,14 +94,20 @@ class AdminUserSerializer(serializers.ModelSerializer):
     # 
     # =========================================================================================================================================
     # get all permisions info for this user
-    # =========================================================================================================================================
+    # =========================================================================================================================================    
     def get_permissions(self, obj):
-        permissions = set()
-        for group in obj.groups.all():
-            permissions.update(perm.codename for perm in group.permissions.all())
-        permissions.update(perm.codename for perm in obj.user_permissions.all())
+        user_permissions = []
         
-        return list(permissions)
+        for group in obj.groups.all():
+            for permission in group.permissions.all():
+                full_perm = f"{permission.content_type.app_label}.{permission.codename}"
+                user_permissions.append(full_perm)
+        
+        for permission in obj.user_permissions.all():
+            full_perm = f"{permission.content_type.app_label}.{permission.codename}"
+            user_permissions.append(full_perm)
+        
+        return list(set(user_permissions))
     # 
     # 
     # 
@@ -213,9 +219,171 @@ class CustomLoginUserSerializer(serializers.Serializer):
         data["user"] = user
         return data
 # =====================================================================================================================
+# 
+# 
+# 
+#    
+# =====================================================================================================================
+# Personal Register Serializer (للتسجيل فقط)
+# يرجع JWT token + بيانات المستخدم بعد التسجيل
+# =====================================================================================================================
+class PersonalRegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, validators=[validate_password], style={'input_type': 'password'})
+    confirm_password = serializers.CharField(write_only=True, style={'input_type': 'password'})
     
+    class Meta:
+        model = User
+        fields = [
+            'id', 'username', 'email', 'phone', 'password', 'confirm_password', 'first_name', 'last_name'
+        ]
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'confirm_password': {'write_only': True}
+        }
+    
+    # =====================================================================
+    # Dynamic validation
+    # =====================================================================
+    def to_internal_value(self, data):
+        validator = DynamicValidator(User, instance=None)
+        is_update = False          
+        try:
+            cleaned_data = validator.validate(data, USER_RULES, is_update=is_update)
+        except ValidationError as e:
+            raise serializers.ValidationError(e.message_dict)
+        return super().to_internal_value(cleaned_data)
+    
+    # =====================================================================
+    # Validatio defaut
+    # =====================================================================
+    def validate(self, data):
+        if data.get('password') != data.get('confirm_password'):
+            raise serializers.ValidationError({'error': 'Password does not match confirmation'})
+        return data
+    
+    # =====================================================================
+    # create pesonal account user 
+    # =====================================================================
+    def create(self, validated_data):
+        validated_data.pop('confirm_password', None)
 
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            phone=validated_data['phone'],
+            password=validated_data['password'],
+            first_name=validated_data.get('first_name', ''),
+            last_name=validated_data.get('last_name', ''),
+            
+            account_type='personal', 
+            is_staff=False,      
+            is_active=True,          
+        )
+    
+        user.groups.clear()
+        user.user_permissions.clear()
+        
+        return user
+    
+    # =====================================================================
+    # representation return data with jwt tokens
+    # =====================================================================
+    def to_representation(self, instance):
 
+        refresh = RefreshToken.for_user(instance)
+        
+        representation = {
+            'user': {
+                'id': instance.id,
+                'username': instance.username,
+                'email': instance.email,
+                'phone': instance.phone,
+                'first_name': instance.first_name,
+                'last_name': instance.last_name,
+                'account_type': instance.account_type,
+                'is_staff': instance.is_staff,
+                'is_active': instance.is_active,
+                'created_at': instance.created_at,
+                'updated_at': instance.updated_at,
+            },
+            'tokens': {
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            }
+        }
+        
+        return representation
+# =====================================================================================================================
+# 
+# 
+# 
+# 
+# =====================================================================================================================
+# This Serializer is for the profile of any registered user.
+    # - It allows the user to see their personal data (ID, username, email, phone, first name, last name, avatar, etc.).
+    # - Sensitive fields such as account_type, is_active, is_staff, groups, and permissions are only read-only.
+# This means the user cannot change them themselves to protect the system from any unauthorized modification.
+# Regarding groups and permissions:
+    # - If the user's account_type is "admin", they will see information about the groups they belong to (groups_info)
+# as well as all the permissions they have, whether from groups or user_permissions.
+    # - If it's a personal account (regular user), they will be left blank [] to indicate that they do not have administrative permissions.
+# Regarding updates:
+    # - Users can change their basic information (such as name, phone number, email, and avatar).
+    # - If the avatar is new, we use `handle_file_update` to keep the old files organized.
+    # - Sensitive fields are never changed (is_staff, is_active, groups, etc.).
+# The purpose of this Serializer is:
+    # - To enable any user to view and edit their profile securely.
+    # - To protect permissions and sensitive fields from any unauthorized modification.
+# =====================================================================================================================
+class ProfileSerializer(serializers.ModelSerializer):
+    groups_info = serializers.SerializerMethodField(read_only=True)
+    permissions = serializers.SerializerMethodField(read_only=True)
+    
+    class Meta:
+        model = User
+        fields = [
+            'id', 'username', 'email', 'phone',
+            'first_name', 'last_name', 'avatar',
+            'account_type', 'is_active', 'is_staff',
+            'groups_info', 'permissions', 
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'account_type', 'is_staff', 'created_at', 'updated_at', 'permissions', 'groups', 'is_active']
+    
+    def get_groups_info(self, object):
+        if object.account_type != 'admin':
+            return [] 
+        
+        return [
+            {'id': group.id,  'name': group.name}
+            for group in object.groups.all()
+        ]
+    
+    def get_permissions(self, object):
+        if object.account_type != 'admin':
+            return []         
+        user_permissions = []
+        for group in object.groups.all():
+            for permission in group.permissions.all():
+                full_perm = f"{permission.content_type.app_label}.{permission.codename}"
+                user_permissions.append(full_perm)
+        
+        for permission in object.user_permissions.all():
+            full_perm = f"{permission.content_type.app_label}.{permission.codename}"
+            user_permissions.append(full_perm)
+        
+        return list(set(user_permissions))
+    
+    def update(self, instance, validated_data):
+        if "avatar" in validated_data:
+            handle_file_update(validated_data.get("avatar"), instance.avatar)
+        
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        
+        instance.save()
+        return instance
+# =====================================================================================================================
 
 
 

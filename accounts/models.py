@@ -50,6 +50,11 @@ class User(AbstractUser):
         self.save()
         return self.is_blocked
     
+    def toggle_status(self):
+        self.is_active = not self.is_active
+        self.save()
+        return self
+    
 # ============================================================================================
 
 
