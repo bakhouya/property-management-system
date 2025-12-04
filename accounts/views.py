@@ -9,7 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .serializers import AdminUserSerializer, UserListSerializer, CustomLoginUserSerializer
+from .serializers import AdminUserSerializer, CustomLoginUserSerializer
 from .models import User
 # =====================================================================================================================
 
@@ -77,7 +77,32 @@ class AdminCreateUserView(generics.CreateAPIView):
         
         if serializer.is_valid():
             user = serializer.save()
-            return Response({'user': user}, status=status.HTTP_201_CREATED)
+            return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
+        
+        return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+# =====================================================================================================================
+# 
+# 
+# 
+# 
+# =====================================================================================================================
+# Update user interface
+# =====================================================================================================================
+class AdminUpdateUserView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = AdminUserSerializer
+    
+    def get_queryset(self):
+        return User.objects.prefetch_related('groups__permissions','user_permissions').all()
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            user = serializer.save()
+ 
+            return Response({'data': serializer.data}, status=status.HTTP_200_OK)
         
         return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 # =====================================================================================================================
@@ -91,9 +116,9 @@ class AdminCreateUserView(generics.CreateAPIView):
 # Returns data formatted within a "data" object.
 # =====================================================================================================================
 class UserListView(generics.ListAPIView):
-    serializer_class = UserListSerializer
+    serializer_class = AdminUserSerializer  
     queryset = User.objects.all().order_by('-created_at')
-    
+
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['account_type', 'is_active', 'is_blocked']
     search_fields = ['username', 'email', 'phone', 'first_name', 'last_name']
@@ -121,7 +146,7 @@ class UserListView(generics.ListAPIView):
 # =====================================================================================================================
 class UserDeleteView(generics.DestroyAPIView):
     queryset = User.objects.all()
-    serializer_class = UserListSerializer
+    serializer_class = AdminUserSerializer
     # permission_classes = [IsAuthenticated, IsAdminUser]  
     
     def destroy(self, request, *args, **kwargs):
@@ -144,7 +169,7 @@ class UserDeleteView(generics.DestroyAPIView):
 # =====================================================================================================================
 class UserDetailView(generics.RetrieveAPIView):
     queryset = User.objects.all()
-    serializer_class = UserListSerializer
+    serializer_class = AdminUserSerializer
     
     def retrieve(self, request, *args, **kwargs):
         try:
