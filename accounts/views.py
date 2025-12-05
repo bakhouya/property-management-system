@@ -4,16 +4,23 @@ from django.forms import ValidationError
 from rest_framework import generics, status, filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from accounts.paginations import CustomPagination
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+# import permissions class
 from .permissions import (CanViewUser, CanChangeUser, CanActivateUser, CanDeleteUser, 
                           CanListUsers, CanEditUserProfile, CanAddUser, CanViewUserProfile, CanBlockUser)
 
-from rest_framework_simplejwt.tokens import RefreshToken
-
+# imports serializers classes
 from .serializers import AdminUserSerializer, CustomLoginUserSerializer, PersonalRegisterSerializer, ProfileSerializer
-from .models import User
+# import model class 
+# from .models import User
+# import filter class
+from .filters import UserFilter
+from django.contrib.auth import get_user_model
+User = get_user_model()
 # =====================================================================================================================
 
 
@@ -124,12 +131,16 @@ class AdminUpdateUserView(generics.UpdateAPIView):
 # =====================================================================================================================
 class UserListView(generics.ListAPIView):
     serializer_class = AdminUserSerializer 
-    permission_classes = [IsAuthenticated, IsAdminUser, CanListUsers] 
-
-    queryset = User.objects.all().order_by('-created_at')
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = ['account_type', 'is_active', 'is_blocked']
+    # permissions classes
+    # permission_classes = [IsAuthenticated, IsAdminUser, CanListUsers] 
+    queryset = User.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['username', 'email', 'phone', 'first_name', 'last_name']
+    filterset_class = UserFilter
+    ordering = ['-created_at']
+    ordering_fields = ['created_at', 'username', 'email', 'first_name', 'last_name']
+    pagination_class = CustomPagination
+    
     
     def get_queryset(self):
         queryset = super().get_queryset()
