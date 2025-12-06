@@ -18,11 +18,16 @@ User = get_user_model()
 # Responsible for verifying and processing logo and icon files
 # ============================================================================================
 class PlatformSettingsSerializer(serializers.ModelSerializer):
+    # dark_logo = serializers.SerializerMethodField()
+    # light_logo = serializers.SerializerMethodField()
+    # favicon = serializers.SerializerMethodField()
+
     class Meta:
         model = PlatformSettings
         fields = '__all__'
         read_only_fields = ['id', 'updated_at']
     
+
     def to_internal_value(self, data):
         validator = DynamicValidator(PlatformSettings, instance=self.instance)
         is_update = self.instance is not None

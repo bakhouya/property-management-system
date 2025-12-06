@@ -11,7 +11,7 @@ class HasCustomPermission(BasePermission):
         user = request.user 
         if not user.is_authenticated or user.account_type != "admin": 
             return False 
-        return user.has_perm(f"app_label.{self.perm_codename}") 
+        return user.has_perm(f"accounts.{self.perm_codename}") 
 # ====================================================================
 
 

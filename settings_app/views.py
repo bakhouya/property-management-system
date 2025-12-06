@@ -4,6 +4,8 @@
 from rest_framework import viewsets, generics, status, permissions, views
 from rest_framework.response import Response
 from rest_framework.decorators import action, permission_classes
+
+from settings_app.permissions import CanManagePlatformSettings
 from .models import (PlatformSettings, SocialMediaSettings, City, SeoSettings, SecuritySettings, UserSettings)
 
 from .serializers import (PlatformSettingsSerializer, SocialMediaSettingsSerializer, SeoSettingsSerializer,
@@ -14,32 +16,61 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 
 User = get_user_model()
 
+
 # ============================================================================================
-# Platform Settings API Display
+# Base API View for all settings views
+# ============================================================================================
+class BaseSettingsAPIView(views.APIView):
+
+    def get_settings_object(self, settings_type):
+        return settings_type()
+    
+    def handle_request(self, request, serializer_class, settings_type, partial=True):
+        settings_obj = self.get_settings_object(settings_type)
+        
+        if request.method == 'GET':
+            serializer = serializer_class(settings_obj)
+            return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+        
+        elif request.method in ['PUT']:
+            serializer = serializer_class(settings_obj, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+
+
+# ============================================================================================
+# Platform Settings API Display 
 # Includes (GET – PUT – PATCH) operations for modifying a single element in the settings
 # ============================================================================================
-class PlatformSettingsAPIView(views.APIView):
-    permission_classes = [IsAuthenticated, IsAdminUser]
-    
+class PlatformSettingsAPIView(BaseSettingsAPIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]  
     def get(self, request):
-        platform = PlatformSettings.get_settings()
-        serializer = PlatformSettingsSerializer(platform)
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+        return self.handle_request(request, PlatformSettingsSerializer, PlatformSettings.get_settings)
     
     def put(self, request):
-        platform = PlatformSettings.get_settings()
-        serializer = PlatformSettingsSerializer(platform, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-       
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+        return self.handle_request(request, PlatformSettingsSerializer, PlatformSettings.get_settings)
     
-    def patch(self, request):
-        platform = PlatformSettings.get_settings()
-        serializer = PlatformSettingsSerializer(platform, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()      
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+    # def get(self, request):
+    #     platform = PlatformSettings.get_settings()
+    #     serializer = PlatformSettingsSerializer(platform)
+    #     return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+    
+    # def put(self, request):
+    #     platform = PlatformSettings.get_settings()
+    #     serializer = PlatformSettingsSerializer(platform, data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+       
+    #     return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+    
+    # def patch(self, request):
+    #     platform = PlatformSettings.get_settings()
+    #     serializer = PlatformSettingsSerializer(platform, data=request.data, partial=True)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()      
+    #     return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+
 # ============================================================================================
 # 
 # 
@@ -49,28 +80,15 @@ class PlatformSettingsAPIView(views.APIView):
 # Displaying a dedicated API for managing social media settings – Social Media Settings
 # Allows reading and modifying settings (GET – PUT – PATCH)
 # ============================================================================================
-class MediaSettingsAPIView(views.APIView):
+class MediaSettingsAPIView(BaseSettingsAPIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
     
     def get(self, request):
-        socialMedia = SocialMediaSettings.get_social_media_settings()
-        serializer = SocialMediaSettingsSerializer(socialMedia)
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+        return self.handle_request(request, SocialMediaSettingsSerializer,  SocialMediaSettings.get_social_media_settings)
     
     def put(self, request):
-        socialMedia = SocialMediaSettings.get_social_media_settings()
-        serializer = SocialMediaSettingsSerializer(socialMedia, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-       
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+        return self.handle_request(request, SocialMediaSettingsSerializer, SocialMediaSettings.get_social_media_settings)
     
-    def patch(self, request):
-        socialMedia = SocialMediaSettings.get_social_media_settings()
-        serializer = SocialMediaSettingsSerializer(socialMedia, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()      
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
 # ============================================================================================
 # 
 # 
@@ -80,28 +98,15 @@ class MediaSettingsAPIView(views.APIView):
 # API Display for SEO Settings
 # Allows reading and modifying settings (GET – PUT – PATCH)
 # ============================================================================================
-class SeoSettingsAPIView(views.APIView):
+class SeoSettingsAPIView(BaseSettingsAPIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
-    
+       
     def get(self, request):
-        seoSettings = SeoSettings.get_seo_settings()
-        serializer = SeoSettingsSerializer(seoSettings)
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+        return self.handle_request(request, SeoSettingsSerializer, SeoSettings.get_seo_settings)
     
     def put(self, request):
-        seoSettings = SeoSettings.get_seo_settings()
-        serializer = SeoSettingsSerializer(seoSettings, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-       
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
-    
-    def patch(self, request):
-        seoSettings = SeoSettings.get_seo_settings()
-        serializer = SeoSettingsSerializer(seoSettings, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()      
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+        return self.handle_request(request, SeoSettingsSerializer, SeoSettings.get_seo_settings)
+
 # ============================================================================================
 # 
 # 
@@ -111,28 +116,14 @@ class SeoSettingsAPIView(views.APIView):
 # Displays a dedicated API for security settings – Security Settings
 # Uses the same algorithm as other settings (GET – PUT – PATCH)
 # ============================================================================================
-class SecuritySettingsAPIView(views.APIView):
+class SecuritySettingsAPIView(BaseSettingsAPIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
-    
     def get(self, request):
-        security = SecuritySettings.get_security_settings()
-        serializer = SecuritySettingsSerializer(security)
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+        return self.handle_request(request, SecuritySettingsSerializer, SecuritySettings.get_security_settings)
     
     def put(self, request):
-        security = SecuritySettings.get_security_settings()
-        serializer = SecuritySettingsSerializer(security, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-       
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
-    
-    def patch(self, request):
-        security = SecuritySettings.get_security_settings()
-        serializer = SecuritySettingsSerializer(security, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()      
-        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+        return self.handle_request(request, SecuritySettingsSerializer, SecuritySettings.get_security_settings)
+
 # ============================================================================================
 # 
 # 
@@ -148,7 +139,13 @@ class CityViewSet(viewsets.ModelViewSet):
     queryset = City.objects.all()
     serializer_class = CitySerializer
     permission_classes = [IsAuthenticated]
-    
+    pagination_class = None
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve', 'active']:
+            return [IsAuthenticated()]
+        else:
+            return [IsAuthenticated(), IsAdminUser()]
+        
     @action(detail=False, methods=['get'])
     def active(self, request):
         cities = City.get_active_cities()
@@ -222,6 +219,7 @@ class UserSettingsDetailView(generics.RetrieveUpdateAPIView):
 class AllUserSettingsListView(generics.ListAPIView):
     serializer_class = UserSettingsWithUserSerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
+    pagination_class = None
     
     def get_queryset(self):
         return UserSettings.objects.all().select_related('user')
@@ -232,12 +230,8 @@ class AllUserSettingsListView(generics.ListAPIView):
 
 
 
-
-
-
-
 # ============================================================================================
-# Combined All Settings API
+# Combined All Settings API 
 # ============================================================================================
 @permission_classes([AllowAny])  
 class AllSettingsAPIView(views.APIView):   
@@ -246,12 +240,13 @@ class AllSettingsAPIView(views.APIView):
 
             platform_settings = PlatformSettings.get_settings()
             social_media_settings = SocialMediaSettings.get_social_media_settings()
+            active_social_media  = social_media_settings.get_active_social_media()
             seo_settings = SeoSettings.get_seo_settings()
            
-            platform = PlatformSettingsSerializer(platform_settings)
-            media = SocialMediaSettingsSerializer(social_media_settings)
-            seo = SeoSettingsSerializer(seo_settings)
-            response_data = {"platform":platform.data, "social_media": media.data, "seo": seo.data,}
+            platform_settings_data = PlatformSettingsSerializer(platform_settings)
+            seo_settings_data = SeoSettingsSerializer(seo_settings)
+
+            response_data = {"platform":platform_settings_data.data, "social_media": active_social_media, "seo_data": seo_settings_data.data,}
             return Response({"data": response_data}, status=status.HTTP_200_OK)
             
         except Exception as e:
