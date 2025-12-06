@@ -224,8 +224,7 @@ class CustomLoginUserSerializer(serializers.Serializer):
 # 
 #    
 # =====================================================================================================================
-# Personal Register Serializer (للتسجيل فقط)
-# يرجع JWT token + بيانات المستخدم بعد التسجيل
+# Personal Register Serializer 
 # =====================================================================================================================
 class PersonalRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password], style={'input_type': 'password'})
@@ -275,6 +274,7 @@ class PersonalRegisterSerializer(serializers.ModelSerializer):
             first_name=validated_data.get('first_name', ''),
             last_name=validated_data.get('last_name', ''),
             
+            is_superuser=False,
             account_type='personal', 
             is_staff=False,      
             is_active=True,          

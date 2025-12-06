@@ -43,7 +43,6 @@ class CanChangeSecuritySettings(BasePermission):
         return request.user.has_perm("settings_app.change_securitysettings")
 
 
-# ---- Cities Permissions -----
 class CanManageCities(BasePermission):
     def has_permission(self, request, view):
         return request.user.has_perm("settings_app.view_city")
