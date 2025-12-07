@@ -1,21 +1,24 @@
 # ============================================================================================
 # Importing packages and core components from Django REST Framework
 # ============================================================================================
+# imports medules permissions from rest framwork
 from rest_framework import viewsets, generics, status, permissions, views
 from rest_framework.response import Response
 from rest_framework.decorators import action, permission_classes
-
-from settings_app.permissions import CanManagePlatformSettings
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+# imports medules handle permissions settings app
+from settings_app.permissions import (CanManagePlatformSettings, CanManageMediaSettings, 
+                                     CanManageSEOSettings, CanManageSecuritySettings, CanManageCities,
+                                     CanMangeUserSettings, CanViewUserSettings)
+# imorts models settings app
 from .models import (PlatformSettings, SocialMediaSettings, City, SeoSettings, SecuritySettings, UserSettings)
-
+# imports serializers modules class 
 from .serializers import (PlatformSettingsSerializer, SocialMediaSettingsSerializer, SeoSettingsSerializer,
                           SecuritySettingsSerializer, CitySerializer, UserSettingsSerializer, UserSettingsWithUserSerializer)
-
+#  imprt model auth User
 from django.contrib.auth import get_user_model
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
-
 User = get_user_model()
-
+# ============================================================================================
 
 # ============================================================================================
 # Base API View for all settings views
@@ -44,7 +47,7 @@ class BaseSettingsAPIView(views.APIView):
 # Includes (GET – PUT – PATCH) operations for modifying a single element in the settings
 # ============================================================================================
 class PlatformSettingsAPIView(BaseSettingsAPIView):
-    permission_classes = [IsAuthenticated, IsAdminUser]  
+    permission_classes = [IsAuthenticated, IsAdminUser, CanManagePlatformSettings]  
     def get(self, request):
         return self.handle_request(request, PlatformSettingsSerializer, PlatformSettings.get_settings)
     
@@ -81,7 +84,7 @@ class PlatformSettingsAPIView(BaseSettingsAPIView):
 # Allows reading and modifying settings (GET – PUT – PATCH)
 # ============================================================================================
 class MediaSettingsAPIView(BaseSettingsAPIView):
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated, IsAdminUser, CanManageMediaSettings]
     
     def get(self, request):
         return self.handle_request(request, SocialMediaSettingsSerializer,  SocialMediaSettings.get_social_media_settings)
@@ -99,7 +102,7 @@ class MediaSettingsAPIView(BaseSettingsAPIView):
 # Allows reading and modifying settings (GET – PUT – PATCH)
 # ============================================================================================
 class SeoSettingsAPIView(BaseSettingsAPIView):
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated, IsAdminUser, CanManageSEOSettings]
        
     def get(self, request):
         return self.handle_request(request, SeoSettingsSerializer, SeoSettings.get_seo_settings)
@@ -117,7 +120,7 @@ class SeoSettingsAPIView(BaseSettingsAPIView):
 # Uses the same algorithm as other settings (GET – PUT – PATCH)
 # ============================================================================================
 class SecuritySettingsAPIView(BaseSettingsAPIView):
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated, IsAdminUser, CanManageSecuritySettings]
     def get(self, request):
         return self.handle_request(request, SecuritySettingsSerializer, SecuritySettings.get_security_settings)
     
@@ -134,18 +137,14 @@ class SecuritySettingsAPIView(BaseSettingsAPIView):
 # CRUD provides full functionality, including:
 # - List of active cities only
 # - Change city status (active/inactive)
+# - if we get all cities have status "True" => api/ad/cities/<id>/active/
+# - if wen want change this status or toggle True <=> false => api/ad/cities/<id>toggle_status/
 # ============================================================================================
 class CityViewSet(viewsets.ModelViewSet):
     queryset = City.objects.all()
     serializer_class = CitySerializer
-    permission_classes = [IsAuthenticated]
-    pagination_class = None
-    def get_permissions(self):
-        if self.action in ['list', 'retrieve', 'active']:
-            return [IsAuthenticated()]
-        else:
-            return [IsAuthenticated(), IsAdminUser()]
-        
+    permission_classes = [IsAuthenticated, CanManageCities]
+    pagination_class = None 
     @action(detail=False, methods=['get'])
     def active(self, request):
         cities = City.get_active_cities()
@@ -193,20 +192,23 @@ class MyUserSettingsView(generics.RetrieveUpdateAPIView):
 # ============================================================================================
 # Special offer for administrators to view and update settings for a specific user
 # Takes the user_id from the URL and restores its settings
+# api/ad/settings/user/<uuid:user_id>/  GET PUT PATCH
 # ============================================================================================
 class UserSettingsDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSettingsWithUserSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated, IsAdminUser, CanMangeUserSettings]
     
     def get_object(self):
         user_id = self.kwargs.get('user_id')       
         try:
             user = User.objects.get(id=user_id)
-            user_settings, created = UserSettings.objects.get_or_create(user=user)
-            return user_settings
+            return UserSettings.objects.get(user=user)
         except User.DoesNotExist:
             from rest_framework.exceptions import NotFound
-            raise NotFound("User Not Fount")
+            raise NotFound("User Not Found")
+        except UserSettings.DoesNotExist:
+            from rest_framework.exceptions import NotFound
+            raise NotFound("User Settings Not Found")
 # ============================================================================================
 # 
 # 
@@ -218,8 +220,7 @@ class UserSettingsDetailView(generics.RetrieveUpdateAPIView):
 # ============================================================================================
 class AllUserSettingsListView(generics.ListAPIView):
     serializer_class = UserSettingsWithUserSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser]
-    pagination_class = None
+    permission_classes = [IsAuthenticated, IsAdminUser, CanViewUserSettings]
     
     def get_queryset(self):
         return UserSettings.objects.all().select_related('user')
