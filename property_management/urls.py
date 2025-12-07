@@ -57,7 +57,7 @@ urlpatterns = [
     # Admin Panel
     path('admin/', admin.site.urls),
     # ========================================================================================
-    path('api/accounts/', include('accounts.urls')),
+    path('api/', include('accounts.urls')),
     path('api/', include('settings_app.urls')),
      path('api/', include('roles.urls')),
 

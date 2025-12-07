@@ -8,7 +8,7 @@ from rest_framework.response import Response
 # ==================================================================================
 class CustomPagination(PageNumberPagination):
     # number items in each page
-    page_size = 2  
+    page_size = 10  
     # option url change page size pagination /api/accounts/ad/users/?page_size=10 
     page_size_query_param = 'page_size' 
     # max page size can user custom  => /api/accounts/ad/users/?page_size=100 => stop

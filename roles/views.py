@@ -7,25 +7,30 @@ from roles.permissions import CanCreateGroup, CanDeleteGroup, CanUpdateGroup, Ca
 from .serializers import PermissionSerializer, GroupSerializer
 
 # ============================================================================================
-# Get all permissions for just red 
+# Get all permissions for just read 
+# The CanCreateGroup and CanUpdateGroup permissions were used here because they are only needed for the processes of creating and updating groups.
+# A custom response was created to display permissions in an organized manner for each model,
+# by grouping the permissions of each model and returning them in an organized and clear way instead of the
+# default format which is less clear to the user or the front end.
 # ============================================================================================
 class PermissionListView(views.APIView):
-    permission_classes = [IsAuthenticated, IsAdminUser] 
+    permission_classes = [IsAuthenticated, IsAdminUser, CanCreateGroup, CanUpdateGroup] 
     
+
     def get(self, request):
         content_types = ContentType.objects.filter(permission__isnull=False).distinct().order_by('app_label', 'model')
         
         result = []
-        for ct in content_types:
-            permissions = Permission.objects.filter(content_type=ct)
+        for contentType in content_types:
+            permissions = Permission.objects.filter(content_type=contentType)
             
             if permissions.exists():
-                model_class = ct.model_class()
-                model_verbose = model_class._meta.verbose_name if model_class else ct.model
+                model_class = contentType.model_class()
+                model_verbose = model_class._meta.verbose_name if model_class else contentType.model
                 
                 result.append({
-                    'app_label': ct.app_label,
-                    'model_name': ct.model,
+                    'app_label': contentType.app_label,
+                    'model_name': contentType.model,
                     'model_verbose': model_verbose,
                     'permissions': PermissionSerializer(permissions, many=True).data
                 })
@@ -47,7 +52,10 @@ class PermissionListView(views.APIView):
 # 
 # 
 # ============================================================================================
-# get all groups
+# In this section, we've presented all groups in an organized manner,
+# with pre-loaded permissions and users associated with each group to improve performance.
+# We've also added simple statistics (number of groups, number of users, and number of permissions)
+# to provide clearer information for the control panel.
 # ============================================================================================
 class GroupListView(generics.ListAPIView):
     queryset = Group.objects.all()
@@ -83,7 +91,10 @@ class GroupListView(generics.ListAPIView):
 # 
 # 
 # ============================================================================================
-#  get itme group by id
+# This section is designed to retrieve data for a single group by ID, returning additional details 
+# such as the number of users and their associated permissions.
+# The prefetch_related feature was used to improve performance, and errors were addressed to ensure a
+#  clear response if the group is not found or another error occurs.
 # ============================================================================================
 class GroupDetailView(generics.RetrieveAPIView):
     queryset = Group.objects.all()
@@ -118,7 +129,9 @@ class GroupDetailView(generics.RetrieveAPIView):
 # 
 # 
 # ============================================================================================
-# create new group with permissions
+# This process creates a new group with its own permissions.
+# Data is checked before saving, and the created group is then returned.
+# Error handling has been added to ensure an appropriate response should any problem occur during the process.
 # ============================================================================================
 class GroupCreateView(generics.CreateAPIView):
     serializer_class = GroupSerializer
@@ -140,7 +153,9 @@ class GroupCreateView(generics.CreateAPIView):
 # 
 # 
 # ============================================================================================
-# Update group item by id
+# This section is for updating the data of a specific group via ID.
+# The group is loaded first, and then the new data is verified before being saved.
+# Error handling has been added to ensure a clear response if any errors occur during the update process.
 # ============================================================================================
 class GroupUpdateView(generics.UpdateAPIView):
     queryset = Group.objects.all()
@@ -165,7 +180,8 @@ class GroupUpdateView(generics.UpdateAPIView):
 # 
 # 
 # ============================================================================================
-#  delete group item by id
+# This section is responsible for deleting a specific group based on its ID.
+# The process is protected by the necessary permissions to ensure that only an authorized user can perform the deletion.
 # ============================================================================================
 class GroupDeleteView(generics.DestroyAPIView):
     queryset = Group.objects.all()

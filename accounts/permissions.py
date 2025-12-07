@@ -1,19 +1,6 @@
 
 from rest_framework.permissions import BasePermission 
 
-# ====================================================================
-# ====================================================================
-class HasCustomPermission(BasePermission): 
-    def __init__(self, perm_codename): 
-        self.perm_codename = perm_codename 
-    
-    def has_permission(self, request, view): 
-        user = request.user 
-        if not user.is_authenticated or user.account_type != "admin": 
-            return False 
-        return user.has_perm(f"accounts.{self.perm_codename}") 
-# ====================================================================
-
 
 # ====================================================================
 # can create new user
@@ -21,7 +8,7 @@ class HasCustomPermission(BasePermission):
 class CanAddUser(BasePermission): 
     def has_permission(self, request, view):
         user = request.user 
-        if not user.is_authenticated or user.account_type != "admin": 
+        if user.account_type != "admin": 
             return False 
         return user.has_perm("accounts.add_user") 
 # ====================================================================
@@ -35,7 +22,7 @@ class CanAddUser(BasePermission):
 class CanViewUser(BasePermission): 
     def has_permission(self, request, view): 
         user = request.user 
-        if not user.is_authenticated: 
+        if user.account_type != "admin":  
             return False 
         return user.has_perm("accounts.view_user") 
 # ====================================================================
@@ -49,7 +36,7 @@ class CanViewUser(BasePermission):
 class CanChangeUser(BasePermission): 
     def has_permission(self, request, view): 
         user = request.user 
-        if not user.is_authenticated or user.account_type != "admin": 
+        if user.account_type != "admin": 
             return False 
         return user.has_perm("accounts.change_user")
 # ====================================================================
@@ -63,7 +50,7 @@ class CanChangeUser(BasePermission):
 class CanDeleteUser(BasePermission): 
     def has_permission(self, request, view):
         user = request.user 
-        if not user.is_authenticated or user.account_type != "admin": 
+        if user.account_type != "admin": 
             return False 
         return user.has_perm("accounts.delete_user") 
 # ====================================================================
@@ -77,7 +64,7 @@ class CanDeleteUser(BasePermission):
 class CanActivateUser(BasePermission): 
     def has_permission(self, request, view): 
         user = request.user 
-        if not user.is_authenticated or user.account_type != "admin": 
+        if user.account_type != "admin": 
             return False 
         return user.has_perm("accounts.can_activate_user") 
 # ====================================================================
@@ -91,7 +78,7 @@ class CanActivateUser(BasePermission):
 class CanBlockUser(BasePermission): 
     def has_permission(self, request, view): 
         user = request.user 
-        if not user.is_authenticated or user.account_type != "admin": 
+        if user.account_type != "admin": 
             return False 
         return user.has_perm("accounts.can_block_user")
 # ====================================================================
@@ -105,7 +92,7 @@ class CanBlockUser(BasePermission):
 class CanListUsers(BasePermission): 
     def has_permission(self, request, view):
         user = request.user 
-        if not user.is_authenticated or user.account_type != "admin": 
+        if user.account_type != "admin": 
             return False 
         return user.has_perm("accounts.can_list_users") 
 # ====================================================================
@@ -119,7 +106,7 @@ class CanListUsers(BasePermission):
 class CanViewUserProfile(BasePermission): 
     def has_permission(self, request, view): 
         user = request.user 
-        if not user.is_authenticated or user.account_type != "admin": 
+        if user.account_type != "admin": 
             return False 
         return user.has_perm("accounts.can_view_user_profile") 
 # ====================================================================
@@ -133,7 +120,7 @@ class CanViewUserProfile(BasePermission):
 class CanEditUserProfile(BasePermission): 
     def has_permission(self, request, view): 
         user = request.user 
-        if not user.is_authenticated or user.account_type != "admin": 
+        if user.account_type != "admin": 
             return False 
         return user.has_perm("accounts.can_edit_user_profile")
 # ====================================================================

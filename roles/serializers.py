@@ -15,7 +15,8 @@ from utils.validators import DynamicValidator
 
 
 # ============================================================================================
-# Permission serializers
+# A simple serializer for displaying permissions information, relying only on the basic fields.
+# (id, codename, and name) without any additional logic, as the goal is to display the data as is.
 # ============================================================================================
 class PermissionSerializer(serializers.ModelSerializer):    
     class Meta:
@@ -27,7 +28,11 @@ class PermissionSerializer(serializers.ModelSerializer):
 # 
 # 
 # ============================================================================================
-# Group serializers
+# This Serializer is responsible for managing group data and its associated permissions.
+# The permissions and users associated with each group are displayed, along with their totals.
+# The permission_ids field has also been added to facilitate the submission of permissions during creation or updates.
+# Additionally, data is passed through a dynamic validator before saving to ensure the accuracy of the input.
+# Finally, the creation and update processes have been optimized to ensure that the permissions associated with each group are saved correctly.
 # ============================================================================================
 class GroupSerializer(serializers.ModelSerializer):
     permissions = PermissionSerializer(many=True, read_only=True)
