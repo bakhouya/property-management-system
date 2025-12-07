@@ -18,7 +18,7 @@ class User(AbstractUser):
     phone  = models.CharField(unique=True, max_length=20)
     # User type for role-based permissions
     ACCOUNT_TYPE_CHOICES  = [('personal', 'Personal'), ('admin', 'Administrator'),]
-    account_type  = models.CharField(max_length=20, choices=ACCOUNT_TYPE_CHOICES, default='personal')
+    account_type  = models.CharField(max_length=20, choices=ACCOUNT_TYPE_CHOICES, default='admin')
     # Avatar User For profile
     avatar = models.ImageField(upload_to="accounts/avatars/", blank=True, null=True)
     # security field if this = True mean can logged

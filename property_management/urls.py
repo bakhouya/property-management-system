@@ -31,29 +31,35 @@ schema_view = get_schema_view(
 # 
 # 
 # ========================================================================================
-# -------- Custom 404 Handler --------
+#  Custom 404 Handler 
 # ========================================================================================
-def custom_404(request, exception=None):
-    return JsonResponse({
-        "status": False,
-        "message": "The endpoint you are looking for does not exist."
-    }, status=404)
+def api_404_handler(request, exception=None):
+    if request.path.startswith('/api/'):
+        return JsonResponse({
+            "status": False,
+            "message": "API endpoint not found",
+            "path": request.path,
+            "method": request.method,
+        }, status=404)
+
+    from django.views.defaults import page_not_found
+    return page_not_found(request, exception)
 # ========================================================================================
 # 
 # 
 # 
 # 
 # ========================================================================================
-# -------- Project URLs --------
+# Project URLs 
 # ========================================================================================
 urlpatterns = [
     # ========================================================================================
     # Admin Panel
     path('admin/', admin.site.urls),
     # ========================================================================================
-    path('api/accounts/', include('accounts.urls')),
+    path('api/', include('accounts.urls')),
     path('api/', include('settings_app.urls')),
-
+     path('api/', include('roles.urls')),
 
     # ========================================================================================
     # Swagger URLs
@@ -73,6 +79,6 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-handler404 = custom_404
+handler404 = api_404_handler
 # ========================================================================================
 

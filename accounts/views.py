@@ -131,8 +131,7 @@ class AdminUpdateUserView(generics.UpdateAPIView):
 # =====================================================================================================================
 class UserListView(generics.ListAPIView):
     serializer_class = AdminUserSerializer 
-    # permissions classes
-    # permission_classes = [IsAuthenticated, IsAdminUser, CanListUsers] 
+    permission_classes = [IsAuthenticated, IsAdminUser, CanListUsers] 
     queryset = User.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['username', 'email', 'phone', 'first_name', 'last_name']
