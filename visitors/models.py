@@ -1,7 +1,7 @@
 
 import uuid
 from django.db import models
-
+from .managers import VisitorManager 
 
 # ============================================================================================
 # A form representing visitors accessing the platform.
@@ -11,7 +11,7 @@ from django.db import models
 # ============================================================================================
 class Visitor(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    key             = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    key             = models.CharField(max_length=255, unique=True)
     ip_address      = models.GenericIPAddressField(protocol="both", unpack_ipv4=True)
     device_type     = models.CharField(max_length=500, null=True, blank=True)
     browser_agent   = models.CharField(max_length=500, null=True, blank=True)
@@ -20,7 +20,11 @@ class Visitor(models.Model):
     first_visit     = models.DateTimeField(auto_now_add=True)
     last_visit      = models.DateTimeField(null=True, blank=True)
 
-
+    objects = VisitorManager()
+    class Meta:
+        permissions = [
+            ("view_list_visitor", "Can view list visitor"),
+        ]
     def __str__(self):
         return f"Visitor: {self.ip_address} ({self.key})"
 # ============================================================================================
