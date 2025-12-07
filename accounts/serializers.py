@@ -233,7 +233,7 @@ class PersonalRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id', 'username', 'email', 'phone', 'password', 'confirm_password', 'first_name', 'last_name'
+            'id', 'username', 'email', 'phone', 'password', 'confirm_password', 'first_name', 'last_name', "visitor"
         ]
         extra_kwargs = {
             'password': {'write_only': True},
@@ -261,7 +261,7 @@ class PersonalRegisterSerializer(serializers.ModelSerializer):
         return data
     
     # =====================================================================
-    # create pesonal account user 
+    # create pesonal account user  
     # =====================================================================
     def create(self, validated_data):
         validated_data.pop('confirm_password', None)
@@ -273,6 +273,7 @@ class PersonalRegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password'],
             first_name=validated_data.get('first_name', ''),
             last_name=validated_data.get('last_name', ''),
+            visitor=validated_data.get('visitor'),
             
             is_superuser=False,
             account_type='personal', 

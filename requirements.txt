@@ -7,5 +7,6 @@ django-filter==24.2
 Pillow
 drf-yasg==1.21.6
 asgiref==3.8.1
+requests
 
 
