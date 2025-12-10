@@ -118,10 +118,10 @@ class DynamicValidator:
         if "required" in rules:
             if is_update:
                 if field_name in data and value in [None, "", []]:
-                    return "This field is required."
+                    return "This field is required to contenu update"
             else:
                 if value in [None, "", []]:
-                    return "This field is required"
+                    return "This field is required to contenu create"
         return None
     # ==========================================================================================
     # 
