@@ -11,7 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 # import permissions class
 from .permissions import (CanViewUser, CanChangeUser, CanActivateUser, CanDeleteUser, 
-                          CanListUsers, CanEditUserProfile, CanAddUser, CanViewUserProfile, CanBlockUser)
+                          CanListUsers, CanAddUser)
 
 # imports serializers classes
 from .serializers import AdminUserSerializer, CustomLoginUserSerializer, PersonalRegisterSerializer, ProfileSerializer
