@@ -2,17 +2,22 @@ from django.db import models
 
 
 class NotificationManager(models.Manager):
+
     # =======================================================================================================
     # The appropriate notification message is returned based on the type of notification and the data associated with it.
     # =======================================================================================================
     def _generate_message(self, notification_type, data):
         user = data.get("user", "Someone")
         item_name = data.get("item_name", "")
+        action = data.get("action", "") 
 
         templates = {
             "like": f"{user} liked {item_name}",
+            "favorite": f"{user} favorited {item_name}",
             "comment": f"{user} commented on {item_name}",
             "message": f"{user} sent you a new message",
+            "block": f"Your property '{item_name}' has been {action} by admin",  
+            "unblock": f"Your property '{item_name}' has been {action} by admin",  
             "default": f"You have a new notification from {user}",
         }
 
@@ -28,14 +33,39 @@ class NotificationManager(models.Manager):
     # =======================================================================================================
     def create_notification(self, target_user, action_user, notification_type, **kwargs):
         try:
+            if target_user == action_user:
+                return False
+
+            NO_DUPLICATE_TYPES = ['like', 'favorite']
             # Extract required fields from keyword arguments
             type_item = kwargs.pop('type_item', None)
             item_id = kwargs.pop('item_id', None)
             item_name = kwargs.pop('item_name', None)
+            action = kwargs.pop('action', None)
+
+            if notification_type in NO_DUPLICATE_TYPES:
+                if type_item and item_id:
+                    from django.utils import timezone
+                    from datetime import timedelta
+                    time_threshold = timezone.now() - timedelta(hours=24)
+                    
+                    duplicate_found = self.filter(
+                        target_user=target_user,
+                        action_user=action_user,
+                        type=notification_type,
+                        type_item=type_item,
+                        item_id=item_id,
+                        created_at__gte=time_threshold
+                    ).exists()
+                    
+                    if duplicate_found:
+                        return False
+            
             # Calling the generate_message function to generate the notification text according to its type and associated data.
             message = self._generate_message(notification_type, {
                 'user': action_user.username, 
-                'item_name': item_name
+                'item_name': item_name,
+                'action': action
             })
             
             # Create a new notification in the database based on the generated data and the data passed to the function.

@@ -9,11 +9,11 @@ from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshVie
 
 urlpatterns = [
     # Custom Url auth Login
-    path('login/', CustomLoginView.as_view(), name='phone-login'),
+    path('auth/login/', CustomLoginView.as_view(), name='phone-login'),
 
     # default auth Login
-    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     # Urls User in admin panel  
     path('ad/users/', UserListView.as_view(), name='user-list'),
@@ -23,7 +23,7 @@ urlpatterns = [
     path('ad/user/<uuid:pk>/', UserDetailView.as_view(), name='user-detail'),
     path('ad/user/<uuid:pk>/change-status/', ToggleStatusUser.as_view(), name='smart-toggle'),
 
-    path('register/', PersonalRegisterView.as_view(), name='register'),
-    path('profile/', ProfileView.as_view(), name='register'),
+    path('accounts/register/', PersonalRegisterView.as_view(), name='register'),
+    path('accounts/profile/', ProfileView.as_view(), name='register'),
 
 ]
