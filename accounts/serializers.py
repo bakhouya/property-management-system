@@ -304,6 +304,7 @@ class PersonalRegisterSerializer(serializers.ModelSerializer):
                 'account_type': instance.account_type,
                 'is_staff': instance.is_staff,
                 'is_active': instance.is_active,
+                'visitor': instance.visitor,
                 'created_at': instance.created_at,
                 'updated_at': instance.updated_at,
             },

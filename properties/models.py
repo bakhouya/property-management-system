@@ -6,6 +6,7 @@ from categories.models import CategoryType, MainCategory, SubCategory
 from settings_app.models import City
 from visitors.models import Visitor
 
+
 # ==========================================================================================================
 # A dedicated form for defining the types of pricing options available on the platform,
 # such as monthly, daily, annual, fixed, or negotiable prices.
