@@ -32,6 +32,7 @@ The platform aims to:
 ````
 
 
-
+[Auth](docs/auth.md)
+[Accounts](docs/accounts.md)
 
 
