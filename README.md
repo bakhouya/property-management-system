@@ -43,7 +43,8 @@ The platform aims to:
 | Method                            | Description | 
 | :---------------------------------| :---------- | 
 | [Auth](docs/auth.md)              | The Auth.md file briefly documents authentication endpoints, such as custom login and the use of JWT Token to protect the API and verify user identity. |
-| [Accounts](docs/accounts.md)      | Creates a new blog, automatically linking it to the authenticated user via the token. |
-| [Groups](docs/roles.md)           | Deletes a specific blog. Only the owner of the blog is authorized to delete it. |
-| [Properties](docs/properties.md)  | Updates a specific blog (e.g., incrementing likes). |
-
+| [Accounts](docs/accounts.md)      | accounts.md is a file that documents user endpoints such as registration and profile management in a concise and clear manner |
+| [Groups](docs/roles.md)           | Groups.md is a file that documents the application endpoints for roles and permissions in a concise and clear manner. |
+| [Properties](docs/properties.md)  | properties.md is a file that documents the application's property endpoints, such as price types, the properties themselves, and comments, in a concise and clear manner. |
+| [Visitors](docs/visitos.md)       | visitors.md is a file that documents visitor access points and their visits in a concise and clear manner. |
+| [Settings](docs/settings.md)      | settings.md is a file that documents the application's settings endpoints in a concise and organized manner. |
