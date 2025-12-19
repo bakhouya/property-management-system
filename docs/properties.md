@@ -1,7 +1,7 @@
 
 
 # Properties & Price Types App Documentation
-The Properties & Price Types app is responsible for managing price types, properties, and comments within the system. All paths are protected and require JWT authentication, with appropriate permissions applied to both administrators and regular users.
+The Properties application is a vital and integral part of the overall **Property Management System** (PMS), playing a pivotal role in handling and managing the most critical and complex APIs. Its technical strength lies in its advanced programming logic, which connects property structures, various price types, and dynamic feedback. This document aims to document these critical elements that form the operational backbone of the platform, explaining how to manage complex data and ensure seamless interaction between the different property components.
 
 ## Price Types (Admin)
 ### Fetch All List Price Type
@@ -22,9 +22,9 @@ Displays a list of all price types within the system. It requires no input and r
                 id: String(uuid)
                 "name": String
                 "description": String
-                status: Boolean
-                created_at: DateTime
-                updated_at: DateTime
+                "status": Boolean
+                "created_at": DateTime
+                "updated_at": DateTime
             }...]
            
         }
@@ -52,9 +52,9 @@ Used to create a new price type. It receives the **name** & ***description** and
             id: String(uuid)
             "name": String
             "description": String
-            status: Boolean
-            created_at: DateTime
-            updated_at: DateTime
+            "status": Boolean
+            "created_at": DateTime
+            "updated_at": DateTime
         }
 ````
 ### Fetch Item Price Type 
@@ -63,12 +63,12 @@ Displays details of a specific price type based on its identifier.
     GET : api/ad/price-types/uuid:pk/
     Response :
         {
-            id: String(uuid)
+             id: String(uuid)
             "name": String
             "description": String
-            status: Boolean
-            created_at: DateTime
-            updated_at: DateTime
+            "status": Boolean
+            "created_at": DateTime
+            "updated_at": DateTime
         }
 ````
 
@@ -86,9 +86,9 @@ Allows modification of data for a specific price type. It receives the fields to
             id: String(uuid)
             "name": String
             "description": String
-            status: Boolean
-            created_at: DateTime
-            updated_at: DateTime
+            "status": Boolean
+            "created_at": DateTime
+            "updated_at": DateTime
         }
 ````
 
@@ -148,7 +148,7 @@ This API is a public and open window for browsing available properties. It is sp
 ````
 
 ### Create New Property
-This API represents the exclusive gateway dedicated to enabling individual users to list their new properties on the platform. It imposes a strict identity verification system that requires prior login to ensure the security of operations. The interface receives the basic data of the property, such as the address and description, via a POST request. Upon successful completion of the process, it creates the property record and restructures the complete data of the newly created property, providing the user with immediate and accurate confirmation of the quality and completeness of their listing.
+This API represents the exclusive gateway dedicated to enabling individual users to list their new properties on the platform. It imposes a strict identity verification system that requires prior login to ensure the security of operations. The interface receives the basic data of the property, such as the address and description, via a **POST** request. Upon successful completion of the process, it creates the property record and restructures the complete data of the newly created property, providing the user with immediate and accurate confirmation of the quality and completeness of their listing.
 ````bash
     POST : api/properties/create/
     Body : 
@@ -172,7 +172,7 @@ This API represents the exclusive gateway dedicated to enabling individual users
 ````
 
 ### Fetching A Signal Item Property 
-This software interface is dedicated to retrieving detailed data for a specific property, operating via the GET protocol to provide a complete and comprehensive file of the required item. The interface not only displays the technical and spatial specifications of the property, but also extends to include the record of comments associated with it and all related interactions, allowing the user to have a panoramic view that combines the property's characteristics with the opinions and questions of interested parties in one integrated graphic response.
+This software interface is dedicated to retrieving detailed data for a specific property, operating via the **GET** protocol to provide a complete and comprehensive file of the required item. The interface not only displays the technical and spatial specifications of the property, but also extends to include the record of comments associated with it and all related interactions, allowing the user to have a panoramic view that combines the property's characteristics with the opinions and questions of interested parties in one integrated graphic response.
 ````bash
     GET : api/properties/<uuid:pk>/
     Response :
@@ -213,7 +213,7 @@ This software interface is dedicated to retrieving detailed data for a specific 
 ````
 
 ### Update Property
-This software interface provides a secure and reliable mechanism to enable users to update their existing property data. It is subject to a dual protection protocol that requires first the authentication of the user’s identity, and second the verification of their actual ownership of the property to be modified. The interface receives the data to be changed via a PATCH/PUT request, and upon successful completion of the process, it returns the complete and updated property data, ensuring the accuracy of the information and its real-time conformity with the new modifications made by the owner.
+This software interface provides a secure and reliable mechanism to enable users to update their existing property data. It is subject to a dual protection protocol that requires first the authentication of the user’s identity, and second the verification of their actual ownership of the property to be modified. The interface receives the data to be changed via a **PATCH/PUT** request, and upon successful completion of the process, it returns the complete and updated property data, ensuring the accuracy of the information and its real-time conformity with the new modifications made by the owner.
 ````bash
     PUT | PATCH : api/properties/<uuid:pk>/update/
     Body : 
@@ -243,7 +243,7 @@ This API is dedicated to completing the final deletion of the property from the 
 ````
 
 ### Change Status Property 
-This API provides a smart mechanism to control the property's display status on the platform, allowing the actual owner to switch the property's status (between active and inactive) by sending a POST request that includes the property's unique ID in the link. This point acts as a secure control key that ensures the user can hide or show their listing at any time, while requiring identity authentication and verification of ownership to ensure that no external parties tamper with the property's display status.
+This API provides a smart mechanism to control the property's display status on the platform, allowing the actual owner to switch the property's status (between active and inactive) by sending a **POST** request that includes the property's unique **ID** in the link. This point acts as a secure control key that ensures the user can hide or show their listing at any time, while requiring identity authentication and verification of ownership to ensure that no external parties tamper with the property's display status.
 ````bash
     POST : api/properties/<uuid:pk>/change-status/
     Response : 
@@ -283,7 +283,7 @@ This API is dedicated to viewing a specific user's real estate portfolio, operat
     GET : api/properties/user/<uuid:user_id>/all/
     Response : 
         {
-        #   Basic
+         # Property Object Schema & Response Structure
         }
 ````
 
@@ -332,7 +332,7 @@ This API is dedicated to displaying a specific user's "favorite properties" list
 ````
 
 ### Fetch All Comments by Property Item
-This API is dedicated to retrieving all comments associated with a specific property via its unique ID. It adopts a structured and organized display system that arranges interactions in a sequential (JSON) list format. The interface is distinguished by its ability to organizationally separate parent comments from their branched responses (children/nested comments), allowing users to logically and easily track dialogue threads and discussions, and providing developers with a data structure ready to build interactive interfaces that support a multi-level response system.
+This API is dedicated to retrieving all comments associated with a specific property via its unique ID. It adopts a structured and organized display system that arranges interactions in a sequential (**JSON**) list format. The interface is distinguished by its ability to organizationally separate parent comments from their branched responses (children/nested comments), allowing users to logically and easily track dialogue threads and discussions, and providing developers with a data structure ready to build interactive interfaces that support a multi-level response system.
 ````bash
     GET : api/properties/<uuid:property_id>/comments/
     Response : 
@@ -405,7 +405,7 @@ This API is designed to enable users to interact directly with real estate listi
 ````
 
 ### Update Comment
-This API is designed to enable users to edit and correct the content of their previous comments, as it imposes a layer of protection that ensures that the right to edit is restricted to the original commenter only. The interface receives the new text to be updated via a PATCH/PUT request, and after verifying the identity and ownership, it updates the comment record and returns the updated data, giving users complete flexibility in managing their textual contributions and interactions while maintaining the accuracy and credibility of the discussions about real estate.
+This API is designed to enable users to edit and correct the content of their previous comments, as it imposes a layer of protection that ensures that the right to edit is restricted to the original commenter only. The interface receives the new text to be updated via a **PATCH/PUT** request, and after verifying the identity and ownership, it updates the comment record and returns the updated data, giving users complete flexibility in managing their textual contributions and interactions while maintaining the accuracy and credibility of the discussions about real estate.
 
 ````bash
     PUT | PATCH : api/properties/comments/<uuid:pk>/update/
@@ -417,6 +417,8 @@ This API is dedicated to completing the final deletion of comments, giving users
     DELETE : api/properties/comments/<uuid:pk>/delete/
 ````
 
+## Note: 
+Only the endpoints for basic functions needed by the average user have been documented, while other endpoints dedicated to the Admin Panel — such as blocking properties, deleting comments,  are not included in this file.
 
 
 

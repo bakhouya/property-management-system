@@ -34,10 +34,16 @@ The platform aims to:
 
 
 
-[Auth](docs/auth.md)
-[Accounts](docs/accounts.md)
-[Groups](docs/roles.md)
 
-[Properties](docs/properties.md)
 
+
+
+
+
+| Method                            | Description | 
+| :---------------------------------| :---------- | 
+| [Auth](docs/auth.md)              | The Auth.md file briefly documents authentication endpoints, such as custom login and the use of JWT Token to protect the API and verify user identity. |
+| [Accounts](docs/accounts.md)      | Creates a new blog, automatically linking it to the authenticated user via the token. |
+| [Groups](docs/roles.md)           | Deletes a specific blog. Only the owner of the blog is authorized to delete it. |
+| [Properties](docs/properties.md)  | Updates a specific blog (e.g., incrementing likes). |
 
