@@ -138,15 +138,11 @@ class GroupCreateView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated, IsAdminUser, CanCreateGroup]
     
     def create(self, request, *args, **kwargs):
-        try:
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            group = serializer.save()
-            
-            return Response({'data': GroupSerializer(group).data}, status=status.HTTP_201_CREATED)  
-            
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        group = serializer.save()
+        
+        return Response({'data': GroupSerializer(group).data}, status=status.HTTP_201_CREATED) 
 # ============================================================================================
 # 
 # 

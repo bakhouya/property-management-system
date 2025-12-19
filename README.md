@@ -32,7 +32,12 @@ The platform aims to:
 ````
 
 
+
+
 [Auth](docs/auth.md)
 [Accounts](docs/accounts.md)
+[Groups](docs/roles.md)
+
+[Properties](docs/properties.md)
 
 

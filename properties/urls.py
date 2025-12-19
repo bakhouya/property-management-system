@@ -47,4 +47,5 @@ urlpatterns = [
     path('properties/comments/<uuid:pk>/update/', views.CommentUpdateView.as_view(), name='comment_update'),
     path('properties/comments/<uuid:pk>/delete/', views.CommentDeleteView.as_view(), name='comment_delete'),
 
+
 ]
