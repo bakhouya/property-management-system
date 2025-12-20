@@ -48,3 +48,4 @@ The platform aims to:
 | [Properties](docs/properties.md)  | properties.md is a file that documents the application's property endpoints, such as price types, the properties themselves, and comments, in a concise and clear manner. |
 | [Visitors](docs/visitos.md)       | visitors.md is a file that documents visitor access points and their visits in a concise and clear manner. |
 | [Settings](docs/settings.md)      | settings.md is a file that documents the application's settings endpoints in a concise and organized manner. |
+| [Categories](docs/categories.md)  | settings.md is a file that documents the application's categories endpoints in a concise and organized manner. |

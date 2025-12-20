@@ -154,6 +154,63 @@ Access to this endpoint is restricted to authorized users to ensure data securit
         }}
 ````
 
+## GRUD Cities 
+Cities are a fundamental part of our project, given their pivotal role in classifying and allocating real estate. For this purpose, a single URL within the CRUD system has been adopted, encompassing all city management operations: **GET** (to retrieve data), **POST** (to add), **PUT** (to update), and **DELETE** (to delete), thus organizing city processing within the system clearly and efficiently.
+````bash
+    GET | PUT | PATCH | POST | DELETE : api/ad/cities/
+    Body : 
+        {
+            "name" : String
+            "status" : Boolean
+        }
+    Respnse : 
+        {"data":
+            {
+                "id": String(uuid)
+                "name": String
+                "status": Boolean
+                "created_at": DateTime
+                "updated_at": DateTime
+            }
+        }
+````
+
+## Fetch Settings User (myself)
+To achieve greater flexibility in our project, we've created custom settings for each user, especially for clients such as property owners and property seekers, enabling them to control certain communication settings.
+This endpoint allows each user to:
+**GET**: Import their own settings.
+**PUT**: Update these settings as needed.
+This is all done within a secure framework that ensures each user can only access their own personal settings.
+````bash
+    GET | PUT  : api/settings/mysettings/
+    Respnse : 
+        {"data":
+            {
+                "id": String(uuid)
+                "contact_whatsapp": Boolean
+                "number_whatsapp": String
+                "contact_vocal": Boolean
+                "number_vocal": String
+                "contact_email": Boolean
+                "show_profile": Boolean
+                "show_contact_info": Boolean
+                "user" : String(uuid)
+                "created_at" : DateTime
+                "updated_at" : DateTime
+            }
+        }
+````
+
+## Fetch settings User in admin panel 
+To ensure complete control within the Admin Panel regarding user settings, dedicated endpoints have been provided for administrators, enabling them to:
+Fetch a list of all user settings
+Fetch the settings of a specific user
+Modify these settings within defined permissions and limits
+Access to these endpoints is restricted to administrative users only, with clear modification restrictions in place to maintain system security and prevent any unauthorized changes.
+````bash
+    GET | PUT  : api/ad/settings/user/<uuid:user_id>/
+    GET | PUT  : api/ad/settings/usersettings/ 
+````
 
 
 
