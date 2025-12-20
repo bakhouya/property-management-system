@@ -64,6 +64,7 @@ urlpatterns = [
      path('api/', include('categories.urls')),
      path('api/', include('properties.urls')),
      path('api/', include('chats.urls')),
+     path('api/', include('analytics.urls')),
 
     # ========================================================================================
     # Swagger URLs
