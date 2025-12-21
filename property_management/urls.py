@@ -49,7 +49,7 @@ def api_404_handler(request, exception=None):
 # 
 # 
 # 
-# ========================================================================================
+# ========================================================================================  
 # Project URLs 
 # ========================================================================================
 urlpatterns = [
@@ -64,6 +64,8 @@ urlpatterns = [
      path('api/', include('categories.urls')),
      path('api/', include('properties.urls')),
      path('api/', include('chats.urls')),
+     path('api/', include('analytics.urls')),
+     path('api/', include('notifications.urls')),
 
     # ========================================================================================
     # Swagger URLs
