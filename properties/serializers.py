@@ -23,6 +23,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        ref_name = "PropertiesuserSerializer" 
         fields = ['id', 'username', 'avatar']
         read_only_fields = fields
 # Serializer is used to display the categories type within the real estate app.

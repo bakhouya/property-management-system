@@ -59,12 +59,12 @@ class MessageSerializer(serializers.ModelSerializer):
 # Includes dynamic validation based on MESSAGE_RULES rules
 # ============================================================================================
 class MessageCreateOrUpdateSerializer(serializers.ModelSerializer):
-    images = serializers.ListField(child=serializers.ImageField(), required=False, write_only=True)
+    images_files = serializers.ListField(child=serializers.ImageField(), required=False, write_only=True)
     
     class Meta:
         model = Message
-        fields = ['id', 'message', 'video', 'audio', 'images']
-        read_only_fields = ['id']
+        fields = ['id', 'message', 'video', 'audio', 'images', 'sender', 'receiver', "images_files"]
+        read_only_fields = ['id', 'images', 'sender', 'receiver',]
     
 
     # ========================================================================
@@ -85,7 +85,7 @@ class MessageCreateOrUpdateSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         receiver = data['receiver']
         conversation = data['conversation']  
-        images_data = data.pop('images', [])
+        images_data = data.pop('images_files', [])
         
         # ===== create message
         message = Message.objects.create(

@@ -22,6 +22,5 @@ urlpatterns = [
     # delete message
     path('messages/<uuid:pk>/delete/', views.MessageDeleteView.as_view(), name='message-delete'),
     # mark message as read
-    path('messages/<uuid:message_id>/read/',  views.MarkMessageReadView.as_view(), name='message-read'),
-        
+    path('messages/<uuid:message_id>/read/',  views.MarkMessageReadView.as_view(), name='message-read'),       
 ]
