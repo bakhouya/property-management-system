@@ -1,10 +1,9 @@
+
 from django.urls import path
-from . import views
+from .views import DetailedSourceAnalysisView, SimpleDashboardStatsAPIView, VisitStatsAPIView
 
 urlpatterns = [
-
-    path('analytics/dashboard/', views.DailySimpleStatsView.as_view(), name='analytics-summary'),
-    path('analytics/visits/source/', views.DetailedSourceAnalysisView.as_view(), name='analytics-summary'),
-    
-
+    path('analytics/visists/sources/', DetailedSourceAnalysisView.as_view(), name='detailed-source-analysis'),
+    path('dashboard/simple-stats/', SimpleDashboardStatsAPIView.as_view(), name='simple-dashboard-stats'),
+    path('stats/visits/', VisitStatsAPIView.as_view(), name='visit-stats'),
 ]
