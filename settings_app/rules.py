@@ -5,8 +5,8 @@
 # Platform settings Validation Rules
 # =============================================================================
 PLATFORM_RULES = {
-    "title": ["required", "min:3", "max:20", "no_html"],
-    "description": ["required", "min:10", "max:13", "no_html"],
+    "title": ["required", "min:3", "max:255", "no_html"],
+    "description": ["required", "min:10", "max:2000", "no_html"],
 
     "timezone": ["required", "min:2", "max:25", "no_html"],
     "currency": ["required", "min:2", "max:10", "no_html"],
@@ -42,7 +42,7 @@ MEDIA_RULES = {
 # =============================================================================
 SEO_RULES = {
     "title": ["min:3", "max:255", "no_html"],
-    "description": ["min:3", "max:255", "no_html"],
+    "description": ["min:3", "max:2000", "no_html"],
     "keywords": ["min:3", "max:255", "no_html"],
     "google_analytics_id": ["min:3", "max:255", "no_html"], 
     "facebook_pixel_id": ["min:3", "max:255", "no_html"], 

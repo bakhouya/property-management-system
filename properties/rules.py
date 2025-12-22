@@ -22,7 +22,7 @@ PROPERTY_RULES = {
 # Categories type Validation Rules
 # =============================================================================
 PRICETYPE_RULES = {
-    "title": ["required", "min:2", "max:200", "no_html"],
+    "name": ["required", "min:2", "max:200", "no_html"],
     "description": ["required", "min:3", "max:2000", "no_html"],  
 }
 # =============================================================================
