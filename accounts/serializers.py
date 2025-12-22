@@ -20,7 +20,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password], style={'input_type': 'password'})
     confirm_password = serializers.CharField(write_only=True, style={'input_type': 'password'})
     groups = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all(), many=True, required=False)
-    groups_user = serializers.SerializerMethodField(read_only=True)
+    # groups_user = serializers.SerializerMethodField(read_only=True)
     permissions = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -29,7 +29,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
             'username', 'email', 'phone', 
             'password', 'confirm_password',
             'first_name', 'last_name', 
-            'account_type', 'is_active', 'groups', 'is_staff', 'avatar', 'permissions', 'groups_user',
+            'account_type', 'is_active', 'groups', 'is_staff', 'avatar', 'permissions', 
         ]
         read_only_fields = ['permissions', 'groups_user', 'created_at', 'updated_at']
         extra_kwargs = {'password': {'write_only': True}, 'confirm_password': {'write_only': True}}
