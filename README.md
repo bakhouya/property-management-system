@@ -28,7 +28,7 @@ The platform aims to:
     git clone https://github.com/bakhouya/property-management-system.git
     cd property-management-system
     pipenv shell
-    pipenv install -r requierments.txt
+    pipenv install -r requirements.txt
 ````
 
 ## Ducomentations Endpoints apps
