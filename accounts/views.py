@@ -63,6 +63,7 @@ class CustomLoginView(APIView):
                 "last_name": user.last_name,
                 "account_type": user.account_type,
                 "is_staff": user.is_staff,
+                "is_superuser": user.is_superuser,
                 "is_active": user.is_active,
                 "is_blocked": user.is_blocked,
                 "groups": [group.name for group in user.groups.all()],

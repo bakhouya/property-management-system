@@ -380,7 +380,7 @@ This API is dedicated to retrieving all comments associated with a specific prop
 ### Create Comment
 This API is designed to enable users to interact directly with real estate listings by adding new comments. It receives the comment content and the ID of the targeted property in the request body. The API processes the data and links it to the identity of the currently registered user. Upon success, it returns a complete object containing the comment text, timestamp, and the user's identification data, ensuring an immediate update to the discussion thread and providing technical confirmation of the successful completion of the posting process.
 ````bash
-    POST : api/properties/comments/create/
+    POST : api/properties/<uuid:property_id>/comments/create/
     Body : 
         {
             "comment": String

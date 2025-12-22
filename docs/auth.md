@@ -16,8 +16,8 @@ This endpoint implements the Django REST Framework's JWT authentication system. 
    POST : api/auth/token/
    Body : application/json 
         {
-            "phone": String ,
-            "password": String
+            "phone": String ,  # 0612975634
+            "password": String  # test@gmail
         }
     Response:
         {
@@ -33,7 +33,7 @@ This endpoint is dedicated to login. It receives the phone number and password a
     Body : application/json 
         {
             "phone": String 
-            "password": String
+            "password": String 
         }
     Response:
         {
