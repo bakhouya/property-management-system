@@ -28,19 +28,13 @@ The platform aims to:
     git clone https://github.com/bakhouya/property-management-system.git
     cd property-management-system
     pipenv shell
-    pipenv install -r requierments.txt
+    pipenv install -r requirements.txt
 ````
-
+## Production API URL 
+````bash
+    https://bamoos.pythonanywhere.com/api/
+````
 ## Ducomentations Endpoints apps
-
-
-
-
-
-
-
-
-
 | Method                            | Description | 
 | :---------------------------------| :---------- | 
 | [Auth](docs/auth.md)              | The Auth.md file briefly documents authentication endpoints, such as custom login and the use of JWT Token to protect the API and verify user identity. |
@@ -49,5 +43,6 @@ The platform aims to:
 | [Properties](docs/properties.md)  | properties.md is a file that documents the application's property endpoints, such as price types, the properties themselves, and comments, in a concise and clear manner. |
 | [Visitors](docs/visitos.md)       | visitors.md is a file that documents visitor access points and their visits in a concise and clear manner. |
 | [Settings](docs/settings.md)      | settings.md is a file that documents the application's settings endpoints in a concise and organized manner. |
-| [Categories](docs/categories.md)  | settings.md is a file that documents the application's categories endpoints in a concise and organized manner. |
-| [Chat](docs/chat.md)              | settings.md is a file that documents the application's Chat endpoints in a concise and organized manner. |
+| [Categories](docs/categories.md)  | scategories.md is a file that documents the application's categories endpoints in a concise and organized manner. |
+| [Chat](docs/chat.md)              | chat.md is a file that documents the application's Chat endpoints in a concise and organized manner. |
+| [Analytics](docs/analytics.md)    | analytics.md is a file that documents the application's Analytics endpoints in a concise and organized manner. |
