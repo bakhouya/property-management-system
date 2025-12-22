@@ -8,7 +8,7 @@ urlpatterns = [
     # ==========================================================================
     path('ad/price-types/', views.PriceTypeListView.as_view(), name='price_types'),  
     path('ad/price-types/active/', views.ActivePriceTypeListView.as_view(), name='active_price_types'),  
-    path('ad/price-types/create/', views.PriceTypeUpdateView.as_view(), name='create_price_type'),
+    path('ad/price-types/create/', views.PriceTypeCreateView.as_view(), name='create_price_type'),
     path('ad/price-types/<uuid:pk>/', views.PriceTypeDetailView.as_view(), name='price_type'),
     path('ad/price-types/<uuid:pk>/update/', views.PriceTypeUpdateView.as_view(), name='price_type_update'),
     path('ad/price-types/<uuid:pk>/delete/', views.PriceTypeDeleteView.as_view(), name='price_type_delete'),   
@@ -43,7 +43,7 @@ urlpatterns = [
     path('properties/user/favorites/', views.UserFavoritesView.as_view(), name='user-_avorites'),
     # comments
     path('properties/<uuid:property_id>/comments/', views.CommentListView.as_view(), name='comments'),
-    path('properties/comments/create/', views.CommentCreateView.as_view(), name='comment_create'),
+    path('properties/<uuid:property_id>/comments/create/', views.CommentCreateView.as_view(), name='comment_create'),
     path('properties/comments/<uuid:pk>/update/', views.CommentUpdateView.as_view(), name='comment_update'),
     path('properties/comments/<uuid:pk>/delete/', views.CommentDeleteView.as_view(), name='comment_delete'),
 

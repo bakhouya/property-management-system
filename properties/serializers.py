@@ -23,8 +23,9 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        ref_name = "userceralizersproperties" 
         fields = ['id', 'username', 'avatar']
-        read_only_fields = fields
+        read_only_fields = ['id', 'username', 'avatar']
 # Serializer is used to display the categories type within the real estate app.
 # ref_name is used to avoid name conflicts with the categories app.
 class CateforyTypeSerializer(serializers.ModelSerializer):
@@ -32,21 +33,21 @@ class CateforyTypeSerializer(serializers.ModelSerializer):
         model = CategoryType
         ref_name = "PropertiesCategoryType" 
         fields = ['id', 'title']
-        read_only_fields = fields
+        read_only_fields = ['id', 'title']
 # Serializer to display the main categories
 class MainCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = MainCategory
         ref_name = "PropertiesMainCategory" 
         fields = ['id', 'title']
-        read_only_fields = fields
+        read_only_fields = ['id', 'title']
 # Serializer to display the sub categories
 class SubCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SubCategory
         ref_name = "PropertiesSubCategory" 
         fields = ['id', 'title']
-        read_only_fields = fields
+        read_only_fields = ['id', 'title']
 # =============================================================================================================================
 
 
@@ -93,8 +94,8 @@ class CommentSerializer(serializers.ModelSerializer):
     replies = serializers.SerializerMethodField(read_only=True)   
     class Meta:
         model = Comment
-        fields = ['id', 'user', 'property', 'comment', 'parent', 'status', 'replies', 'created_at', 'updated_at']
-        read_only_fields = ['id', 'user', 'created_at', 'updated_at', 'replies']
+        fields = ['id', 'user', 'comment', 'property', 'parent', 'status', 'replies', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'user', 'created_at', 'updated_at', 'replies', 'property' ]
      
     #  get dynamic validation rules for create and update
     def to_internal_value(self, data):
@@ -148,7 +149,7 @@ class PropertyDetailSerializer(serializers.ModelSerializer):
             'city', 'address', 'area', 'is_owner', 'price', 'price_type', 'video', 'status', 'is_blocked',
             'views_count', 'comments_count', 'likes_count', 'favorites_count', 'is_liked', 'is_favorited', 'images', 'comments',
              'created_at', 'updated_at']
-        read_only_fields =  fields
+        # read_only_fields =  fields
 
     def get_comments(self, object):
         if object.comments.exists():
@@ -246,13 +247,18 @@ class PropertyCreateSerializer(serializers.ModelSerializer):
         updated = super().update(instance, data)
         
         if updated:
-            if "image" in images:  
-                image_file = images["image"]
-                handle_file_update(image_file, instance.image)
-            
-            for key, image_file in images.items():
-                if key != "image":  
-                    PropertyImage.objects.create(property=updated, image=image_file)
+            if images:  
+                if isinstance(images, list):
+                    for image_file in images:
+                        PropertyImage.objects.create(property=updated, image=image_file)
+                elif isinstance(images, dict):
+                    if "image" in images:  
+                        image_file = images["image"]
+                        handle_file_update(image_file, instance.image)
+                    
+                    for key, image_file in images.items():
+                        if key != "image":  
+                            PropertyImage.objects.create(property=updated, image=image_file)
             
         return instance
 # =============================================================================================================================

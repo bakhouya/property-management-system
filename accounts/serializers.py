@@ -128,7 +128,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
             last_name=validated_data.get('last_name', ''),
             account_type=validated_data.get('account_type', 'admin'),
             is_active=validated_data.get('is_active', False),
-            is_staff=validated_data.get('is_staff', False),
+            is_staff=validated_data.get('is_staff', True),
             avatar=validated_data.get('avatar'),
         )
         # Ensure that the new user does not inherit any old groups or permissions
@@ -233,8 +233,9 @@ class PersonalRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id', 'username', 'email', 'phone', 'password', 'confirm_password', 'first_name', 'last_name', "visitor"
+            'id', 'username', 'email', 'phone', 'password', 'confirm_password', 'first_name', 'last_name', "visitor", "is_staff", "is_active", "account_type", "avatar"
         ]
+        read_only_fields = ['id', "is_staff", "is_active", "account_type", "created_at", "updated_at", "avatar"]
         extra_kwargs = {
             'password': {'write_only': True},
             'confirm_password': {'write_only': True}
@@ -299,6 +300,7 @@ class PersonalRegisterSerializer(serializers.ModelSerializer):
                 'username': instance.username,
                 'email': instance.email,
                 'phone': instance.phone,
+                "avatar": instance.avatar.url if instance.avatar and instance.avatar.name else None,
                 'first_name': instance.first_name,
                 'last_name': instance.last_name,
                 'account_type': instance.account_type,

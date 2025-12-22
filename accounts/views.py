@@ -57,10 +57,12 @@ class CustomLoginView(APIView):
                 "id": user.id,
                 "username": user.username,
                 "email": user.email,
+                "avatar": user.avatar.url if user.avatar and user.avatar.name else None,
                 "phone": user.phone,
                 "first_name": user.first_name,
                 "last_name": user.last_name,
                 "account_type": user.account_type,
+                "is_staff": user.is_staff,
                 "is_active": user.is_active,
                 "is_blocked": user.is_blocked,
                 "groups": [group.name for group in user.groups.all()],
@@ -90,7 +92,7 @@ class AdminCreateUserView(generics.CreateAPIView):
             user = serializer.save()
             return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
         
-        return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 # =====================================================================================================================
 # 
 # 
@@ -117,7 +119,7 @@ class AdminUpdateUserView(generics.UpdateAPIView):
  
             return Response({'data': serializer.data}, status=status.HTTP_200_OK)
         
-        return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 # =====================================================================================================================
 # 
 # 
@@ -262,7 +264,7 @@ class PersonalRegisterView(generics.CreateAPIView):
             
             return Response({'data': response_data}, status=status.HTTP_201_CREATED)
         
-        return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 # =====================================================================================================================
 # 
 # 

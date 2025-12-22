@@ -24,7 +24,7 @@ from utils.paginations import CustomDynamicPagination
 # A common fundamental rule for all PriceType Views
 # Aimed at reducing redundancy (DRY) and standardizing the queryset and serializer
 # =============================================================================================================================
-class BasePriceTypeView:
+class BasePriceTypeView(generics.GenericAPIView):
     queryset = PriceType.objects.all()
     serializer_class = PriceTypeSerializer
 # =============================================================================================================================
@@ -333,6 +333,8 @@ class CommentCreateView(generics.CreateAPIView):
 class CommentUpdateView(generics.UpdateAPIView):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated, IsOwner]
+    def get_queryset(self):
+        return Comment.objects.all()
 
 # =============================================================================================================================
 # 
@@ -342,6 +344,8 @@ class CommentUpdateView(generics.UpdateAPIView):
 class CommentDeleteView(generics.DestroyAPIView):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated, IsOwner]
+    def get_queryset(self):
+        return Comment.objects.all()
 # =============================================================================================================================
 
 
